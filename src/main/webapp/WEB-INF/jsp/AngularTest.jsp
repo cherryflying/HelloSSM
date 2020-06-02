@@ -8,14 +8,14 @@
 	charset="UTF-8"></script>
 
 <script src="//apps.bdimg.com/libs/angular.js/1.4.6/angular.min.js"></script>
-<script type="text/javascript" src="js/index.js" charset="UTF-8"></script>
+<script type="text/javascript" src="js/angularTest.js" charset="UTF-8"></script>
 
 </head>
 <body ng-app="myApp">
 
-<form ng-submit="submitForm()" ng-controller="userController">
-    username:<input type="text" ng-model="user.userName"/> <br/>
-    password:<input type="text" ng-model="user.password"/> <br/>
+<form ng-submit="submitForm()" ng-controller="carController">
+    汽车品牌:<input type="text" ng-model="car.brand"/> <br/>
+    汽车颜色:<input type="text" ng-model="car.color"/> <br/>
     <button type="submit">submit</button>
 </form>
 

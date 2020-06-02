@@ -61,6 +61,11 @@ public class UserController {
 		return new ModelAndView("error");
 	}
 
+	@RequestMapping(value = "AngularTest")
+	public ModelAndView angularTest(HttpSession session, Model model) {
+		return new ModelAndView("AngularTest");
+	}
+	
 	@RequestMapping(value = "register")
 	public ModelAndView register(HttpSession session, Model model) {
 		return new ModelAndView("register");
