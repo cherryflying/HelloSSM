@@ -1,7 +1,12 @@
 eclipse.preferences.version=1
+encoding//src/main/java/com/lxn/dao/UserBookDao.java=UTF-8
+encoding//src/main/java/com/lxn/dao/UserDao.java=UTF-8
+encoding//src/main/java/com/lxn/entity/Appointment.java=UTF-8
+encoding//src/main/java/com/lxn/entity/Book.java=UTF-8
 encoding//src/main/webapp/WEB-INF/jsp/AngularTest.jsp=UTF-8
 encoding//src/main/webapp/WEB-INF/jsp/error.jsp=UTF-8
 encoding//src/main/webapp/WEB-INF/jsp/login.jsp=UTF-8
 encoding//src/main/webapp/WEB-INF/jsp/register.jsp=UTF-8
 encoding//src/main/webapp/WEB-INF/jsp/success.jsp=UTF-8
 encoding//src/main/webapp/js/register.js=UTF-8
+encoding/<project>=UTF-8

@@ -1,10 +1,8 @@
 package com.lxn.controller;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -13,16 +11,17 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
+import com.lxn.entity.Book;
+import com.lxn.entity.ResultEntity;
 import com.lxn.entity.User;
-
+import com.lxn.entity.UserBook;
+import com.lxn.entity.UserBookEntity;
 import com.lxn.service.UserService;
 
 @Controller
@@ -44,15 +43,34 @@ public class UserController {
 		String password = user.getPassword();
 		User userFromDao = userService.getUserByNameAndByPass(userName, password);
 		if (userFromDao != null) {
-			model.addAttribute(userFromDao);
-			return "redirect:/success";
+			// model.addAttribute(userFromDao);
+			return "success";
 		}
 
 		return null;
 	}
 
 	@RequestMapping(value = "success")
-	public ModelAndView success(HttpSession session, Model model) {
+	public ModelAndView success(HttpSession session, Model model, HttpServletRequest request,
+			HttpServletResponse response) {
+		String userId = request.getParameter("userId");
+		List<UserBook> userBook = userService.queryBookByUser(userId);
+		List<UserBookEntity> userBookEntitys = new ArrayList<UserBookEntity>();
+		Iterator<UserBook> iterator = userBook.iterator();
+		while (iterator.hasNext()) {
+			UserBook userBookIter = iterator.next();
+			Long bookId = userBookIter.getBookId();
+			Book book = userService.queryById(bookId);
+			UserBookEntity userBookEntity = new UserBookEntity();
+			userBookEntity.setBookId(bookId);
+			userBookEntity.setBookName(book.getName());
+			userBookEntity.setExpireDate(userBookIter.getExpireDate());
+			userBookEntity.setUserId(userId);
+			userBookEntity.setUserName(((User) session.getAttribute("user")).getName());
+			userBookEntitys.add(userBookEntity);
+		}
+
+		session.setAttribute("userBookEntitys", userBookEntitys);
 		return new ModelAndView("success");
 	}
 
@@ -65,7 +83,7 @@ public class UserController {
 	public ModelAndView angularTest(HttpSession session, Model model) {
 		return new ModelAndView("AngularTest");
 	}
-	
+
 	@RequestMapping(value = "register")
 	public ModelAndView register(HttpSession session, Model model) {
 		return new ModelAndView("register");
@@ -73,14 +91,19 @@ public class UserController {
 
 	@RequestMapping(value = "/index.do", method = RequestMethod.POST)
 	@ResponseBody
-	public String users(User user, HttpSession session) {
+	public ResultEntity users(User user, HttpSession session) {
 
 		User userFromDao = userService.getUserByNameAndByPass(user.getUserName(), user.getPassword());
+		ResultEntity resultEntity = new ResultEntity();
 		if (userFromDao != null) {
+			// session.setAttribute("user", userFromDao);
 			session.setAttribute("user", userFromDao);
-			return "success";
+			resultEntity.setResultObject(userFromDao);
+			resultEntity.setStatus("success");
+			return resultEntity;
 		} else {
-			return "error";
+			resultEntity.setStatus("fail");
+			return resultEntity;
 		}
 	}
 
@@ -95,18 +118,20 @@ public class UserController {
 		return "success";
 	}
 
-//	@RequestMapping(value="/index.do", method=RequestMethod.POST)
-//	@ResponseBody
-//	public String users(@RequestParam("userName") String userName, @RequestParam("password") String password) throws Exception{	
-//		User userFromDao=userService.getUserByNameAndByPass(userName, password);
-//		if(userFromDao!=null) {
-//			return "/success";
-//		}
-//		else
-//		{
-//			return "/error";
-//		}
-//		
-//	}
+	@RequestMapping(value = "/UserBook.do", method = RequestMethod.GET)
+	@ResponseBody
+	public ResultEntity queryBookByUser(User user, HttpSession session) {
+		List<UserBookEntity> list = (List<UserBookEntity>) session.getAttribute("userBookEntitys");
+		ResultEntity resultEntity = new ResultEntity();
+		if (list != null) {
+			resultEntity.setResultObject(list);
+			resultEntity.setStatus("success");
+			return resultEntity;
+		} else {
+			resultEntity.setStatus("fail");
+			return resultEntity;
+		}
+
+	}
 
 }
